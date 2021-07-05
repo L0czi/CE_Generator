@@ -52,7 +52,7 @@ def generate_CE(rad_from_db, lang):
 def query_all_data_from_db():
     '''read all data stored in rad.db'''
     try:
-        query = "SELECT * from radiators_CE"
+        query = "SELECT * from CE_radiators"
         data = db.read_data(query)
 
         if data == []:

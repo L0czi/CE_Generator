@@ -6,7 +6,7 @@ import datetime
 def read_data(sql_fetch_query, value=None):
     '''Function wich query data from rad.db'''
     try:
-        sqliteConnection = sqlite3.connect('rad.db')
+        sqliteConnection = sqlite3.connect('rad_data_base.db')
         cursor = sqliteConnection.cursor()
 
         if value==None:
@@ -30,24 +30,27 @@ def read_data(sql_fetch_query, value=None):
 def upload_data(input_data):
     '''Function upload new radiator from input list to data base'''
     try:
-        sqliteConnection = sqlite3.connect('rad.db')
+        sqliteConnection = sqlite3.connect('rad_data_base.db')
         cursor = sqliteConnection.cursor()
-        query = "INSERT INTO radiators_CE VALUES (NULL,:Name, :Family, :Model_Type, :CE_Type, :Sign_Date, :CP)"
+        query = "INSERT INTO CE_radiators VALUES (NULL, :Name, :Family, :Model_Type, :CP, :CE_Type, :Report_num, :Signaturer, :Sign_Date)"
 
         for item in input_data:
 
-            if len(item)<5:
+            if len(item)<7:
                 print(f"Missing argument for {item}. Check data in .csv file ")
                 continue
 
             name = item[0]
             familly = item[1]
             model_type = item[2]
-            CE_type = item[3]
+            cp_number = item[3]
+            CE_type = item[4]
+            report_num = item[5]
+            signaturer = item[6]
             sign_date = datetime.date.today()
-            cp_number = item[4]
 
-            input_data_tuple = (name, familly, model_type, CE_type, sign_date, cp_number)
+
+            input_data_tuple = (name, familly, model_type, cp_number, CE_type, report_num, signaturer, sign_date)
             cursor.execute(query, input_data_tuple)
 
             sqliteConnection.commit()

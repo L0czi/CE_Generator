@@ -30,7 +30,7 @@ def get_parser():
 def command_line_runner():
     parser = get_parser()
     args = vars(parser.parse_args())
-    #print(args)
+
 
     if args['command'] == 'add':
 
@@ -41,6 +41,7 @@ def command_line_runner():
 
         input_data = u.compare_data(rad_from_csv, rad_from_db)
         u.query_data_into_db(input_data)
+
 
 
     if args['command'] == 'display':
@@ -63,7 +64,7 @@ def command_line_runner():
 
         if args['cp'] != None:
 
-            query = "SELECT * from radiators_CE WHERE cp=:cp "
+            query = "SELECT * from CE_radiators WHERE cp=:cp "
             value={}
             value['cp'] = args['cp']
 
@@ -72,7 +73,7 @@ def command_line_runner():
 
         if args['family'] != None:
 
-            query = "SELECT * from radiators_CE WHERE Family=:family"
+            query = "SELECT * from CE_radiators WHERE Family=:family"
             value = {}
             value['family']=args['family']
 
@@ -81,7 +82,7 @@ def command_line_runner():
 
         if args['model'] != None:
 
-            query = "SELECT * from radiators_CE WHERE Name=:model"
+            query = "SELECT * from CE_radiators WHERE Name=:model"
             value = {}
             value['model']=args['model']
 
