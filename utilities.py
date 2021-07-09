@@ -2,6 +2,7 @@ import csv
 import json
 import data_base as db
 from fpdf import Template
+import time
 
 
 def query_all_data_from_csv():
@@ -27,12 +28,15 @@ def compare_data(rad_from_csv, rad_from_db):
 
 def generate_CE(input_list, lang):
 
-    try:
+    start = time.perf_counter()
+    counter=0
 
+    try:
         for rad in input_list:
 
             templates = rad[4].split(',')
             language = query_lang_from_csv(lang)
+
 
             for temp in templates:
 
@@ -68,11 +72,17 @@ def generate_CE(input_list, lang):
 
                 f.render("Printed_Declarations/" + title)
                 print(f"{title} is generated succesfully")
+                counter += 1
 
     except PermissionError:
         print("\nWARNING!!!")
         print(f"{declaration_name} is open in another aplication and can't be generate.")
         print("Please close another aplication and try again")
+
+    stop = time.perf_counter()
+    print('\n')
+    print(f'Generation time: {stop-start:0.3f}')
+    print(f'Generated declarations: {counter}')
 
 def query_all_data_from_db():
     '''read all data stored in rad.db'''
