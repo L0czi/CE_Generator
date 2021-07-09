@@ -16,7 +16,8 @@ def query_lang_from_csv(lang):
     with open('Layout/lang/' + lang + '.csv', encoding='utf-8') as data:
         csv_data = csv.reader(data, delimiter=';')
         data_lines = list(csv_data)
-        return(data_lines[0])
+        result = [item[0] for item in data_lines]
+        return(result)
 
 def compare_data(rad_from_csv, rad_from_db):
     '''Function compera radiators from .csv file and from data base'''
@@ -38,6 +39,7 @@ def generate_CE(input_list, lang):
 
         f["rad_model"] = rad[0]
         f["rad_name"] = rad[1]
+        f["report_num"] = rad[5]
         f["signer"] = rad[6]
         f["date"] = rad[7]
 
@@ -51,6 +53,10 @@ def generate_CE(input_list, lang):
         f["line8"] = language[7]
         f["line9"] = language[8]
         f["line10"] = language[9]
+        f["line11"] = language[10]
+        f["line12"] = language[11]
+        f["line13"] = language[12]
+        f["line14"] = language[13]
 
         f["company_logo"] = "Layout/Zehnder.png"
         f["sign"] = "Layout/sign.png"
