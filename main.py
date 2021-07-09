@@ -47,7 +47,7 @@ def command_line_runner():
     if args['command'] == 'display':
 
         data_from_db = u.query_all_data_from_db()
-        rad_from_db = [rad[0] for rad in  data_from_db]
+        rad_from_db = [(rad[0], rad[1], rad[2], rad[3]) for rad in  data_from_db]
 
         for i, rad in enumerate(rad_from_db, start=1):
             print(i, rad)
@@ -69,6 +69,7 @@ def command_line_runner():
             value['cp'] = args['cp']
 
             rad_from_db = u.query_data_from_db(query,value)
+            print(rad_from_db)
             u.generate_CE(rad_from_db,args['language'])
 
         if args['family'] != None:
