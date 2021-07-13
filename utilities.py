@@ -6,22 +6,24 @@ import time
 
 
 def query_all_data_from_csv():
-    '''Function read data about radiators from example.csv file and return it'''
-    with open('example.csv', encoding='utf-8') as data:
-        csv_data = csv.reader(data, delimiter=';')
+    """Function read data about radiators from example.csv file and return it"""
+    with open("example.csv", encoding="utf-8") as data:
+        csv_data = csv.reader(data, delimiter=";")
         data_lines = list(csv_data)
         return data_lines[1:]
 
+
 def query_lang_from_csv(lang):
 
-    with open('Layout/lang/' + lang + '.csv', encoding='utf-8') as data:
-        csv_data = csv.reader(data, delimiter=';')
+    with open("Layout/lang/" + lang + ".csv", encoding="utf-8") as data:
+        csv_data = csv.reader(data, delimiter=";")
         data_lines = list(csv_data)
         result = [item[0] for item in data_lines]
-        return(result)
+        return result
+
 
 def compare_data(rad_from_csv, rad_from_db):
-    '''Function compera radiators from .csv file and from data base'''
+    """Function compera radiators from .csv file and from data base"""
     result = [item for item in rad_from_csv if item[0] not in rad_from_db]
     return result
 
@@ -29,21 +31,28 @@ def compare_data(rad_from_csv, rad_from_db):
 def generate_CE(input_list, lang):
 
     start = time.perf_counter()
-    counter=0
+    counter = 0
 
     try:
         for rad in input_list:
 
-            templates = rad[4].split(',')
+            templates = rad[4].split(",")
             language = query_lang_from_csv(lang)
-
 
             for temp in templates:
 
-                title = "Declaration_" + rad[0].replace('/','_') + "_" + lang +"_"+ temp + ".pdf"
+                title = (
+                    "Declaration_"
+                    + rad[0].replace("/", "_")
+                    + "_"
+                    + lang
+                    + "_"
+                    + temp
+                    + ".pdf"
+                )
 
                 f = Template(format="A4", title=title)
-                f.parse_csv('Layout/temp/'+ temp + ".csv")
+                f.parse_csv("Layout/temp/" + temp + ".csv")
                 f.add_page()
 
                 f["rad_model"] = rad[0]
@@ -76,16 +85,17 @@ def generate_CE(input_list, lang):
 
     except PermissionError:
         print("\nWARNING!!!")
-        print(f"{declaration_name} is open in another aplication and can't be generate.")
+        print(f"{title} is open in another aplication and can't be generate.")
         print("Please close another aplication and try again")
 
     stop = time.perf_counter()
-    print('\n')
-    print(f'Generation time: {stop-start:0.3f}')
-    print(f'Generated declarations: {counter}')
+    print("\n")
+    print(f"Generation time: {stop-start:0.3f}")
+    print(f"Generated declarations: {counter}")
+
 
 def query_all_data_from_db():
-    '''read all data stored in rad.db'''
+    """read all data stored in rad.db"""
     try:
         query = "SELECT * from CE_radiators"
         data = db.read_data(query)
@@ -94,16 +104,17 @@ def query_all_data_from_db():
             raise ValueError
 
     except ValueError:
-        print('Data base is empty')
+        print("Data base is empty")
 
     else:
         result = [rad[1:] for rad in data]
         return result
 
+
 def query_data_from_db(query, value):
-    '''query data from rad.db'''
+    """query data from rad.db"""
     try:
-        data = db.read_data(query,value)
+        data = db.read_data(query, value)
 
         if data == []:
             raise ValueError
@@ -115,8 +126,9 @@ def query_data_from_db(query, value):
         result = [rad[1:] for rad in data]
         return result
 
+
 def query_data_into_db(input_data):
-    '''validate input data to rad.db and quering them'''
+    """validate input data to rad.db and quering them"""
     try:
         if input_data == []:
             raise ValueError
@@ -125,8 +137,3 @@ def query_data_into_db(input_data):
 
     except ValueError:
         print("No new radiators to add")
-
-
-
-
-
