@@ -4,39 +4,38 @@ from fpdf import Template
 import time
 
 
-def query_all_data_from_csv():
-    """Function read data about radiators from example.csv file and return it"""
-    with open("example.csv", encoding="utf-8") as data:
+def read_data_from_csv(file_name):
+    """common function for reading data from csv files"""
+    with open(file_name, encoding="utf-8") as data:
         csv_data = csv.reader(data, delimiter=";")
-        data_lines = list(csv_data)
-        return data_lines[1:]
-
-
-def query_lang_from_csv(lang):
-
-    with open("Layout/lang/" + lang + ".csv", encoding="utf-8") as data:
-        csv_data = csv.reader(data, delimiter=";")
-        data_lines = list(csv_data)
-        result = [item[0] for item in data_lines]
-        return result
+        list_data = list(csv_data)
+        return list_data
 
 
 def compare_data(rad_from_csv, rad_from_db):
-    """Function compera radiators from .csv file and from data base"""
+    """Function compera radiators from given .csv input file and stored in data base"""
     result = [item for item in rad_from_csv if item[0] not in rad_from_db]
     return result
 
 
-def generate_CE(input_list, lang):
-
+def generate_CE(rad_list, lang):
+    """Function generate a ce_declaration from given template, language option and data about products stored in .db"""
     start = time.perf_counter()
     counter = 0
 
     try:
-        for rad in input_list:
+        for rad in rad_list:
 
+            # read all possible template
+            # type is stored in rad_list and can be diffrent for next rad
+            # second loop is prepared for cases whan there is more than one
+            # template assign to radiator
             templates = rad[4].split(",")
-            language = query_lang_from_csv(lang)
+
+            # read a proper language template based on given "lang"
+            lang_template_name = "Layout/lang/" + lang + ".csv"
+            lang_template = read_data_from_csv(lang_template_name)
+            language = [item[0] for item in lang_template]
 
             for temp in templates:
 
@@ -49,11 +48,13 @@ def generate_CE(input_list, lang):
                     + temp
                     + ".pdf"
                 )
-
+                # set up a template
                 f = Template(format="A4", title=title)
-                f.parse_csv("Layout/temp/" + temp + ".csv")
+                template_name = "Layout/temp/" + temp + ".csv"
+                f.parse_csv(template_name)
                 f.add_page()
 
+                # fill all prepared gaps in template
                 f["rad_model"] = rad[0]
                 f["rad_name"] = rad[1]
                 f["report_num"] = rad[5]

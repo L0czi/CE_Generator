@@ -1,5 +1,5 @@
 import argparse
-import utilities as u
+import utilities as util
 
 
 def get_parser():
@@ -74,17 +74,18 @@ def command_line_runner():
 
     if args["command"] == "add":
 
-        rad_from_csv = u.query_all_data_from_csv()
+        data_from_csv = util.read_data_from_csv("example_temporary.csv")
+        rad_from_csv = data_from_csv[1:]
 
-        data_from_db = u.query_all_data_from_db()
+        data_from_db = util.query_all_data_from_db()
         rad_from_db = [rad[0] for rad in data_from_db]
 
-        input_data = u.compare_data(rad_from_csv, rad_from_db)
-        u.query_data_into_db(input_data)
+        input_data = util.compare_data(rad_from_csv, rad_from_db)
+        util.query_data_into_db(input_data)
 
     if args["command"] == "display":
 
-        data_from_db = u.query_all_data_from_db()
+        data_from_db = util.query_all_data_from_db()
         rad_from_db = [(rad[0], rad[1], rad[2], rad[3]) for rad in data_from_db]
 
         for i, rad in enumerate(rad_from_db, start=1):
@@ -99,11 +100,10 @@ def command_line_runner():
             and args["model"] == None
         ):
             print("Choose one of the options!!!\n")
-            u.generate_CE(rad_from_db, args["language"])
 
         if args["all"] == True:
-            rad_from_db = u.query_all_data_from_db()
-            u.generate_CE(rad_from_db, args["language"])
+            rad_from_db = util.query_all_data_from_db()
+            util.generate_CE(rad_from_db, args["language"])
 
         if args["cp"] != None:
 
@@ -111,9 +111,8 @@ def command_line_runner():
             value = {}
             value["cp"] = args["cp"]
 
-            rad_from_db = u.query_data_from_db(query, value)
-            print(rad_from_db)
-            u.generate_CE(rad_from_db, args["language"])
+            rad_from_db = util.query_data_from_db(query, value)
+            util.generate_CE(rad_from_db, args["language"])
 
         if args["family"] != None:
 
@@ -121,8 +120,8 @@ def command_line_runner():
             value = {}
             value["family"] = args["family"]
 
-            rad_from_db = u.query_data_from_db(query, value)
-            u.generate_CE(rad_from_db, args["language"])
+            rad_from_db = util.query_data_from_db(query, value)
+            util.generate_CE(rad_from_db, args["language"])
 
         if args["model"] != None:
 
@@ -130,8 +129,8 @@ def command_line_runner():
             value = {}
             value["model"] = args["model"]
 
-            rad_from_db = u.query_data_from_db(query, value)
-            u.generate_CE(rad_from_db, args["language"])
+            rad_from_db = util.query_data_from_db(query, value)
+            util.generate_CE(rad_from_db, args["language"])
 
     if args["command"] == None:
         print("Please choose a command or use -h for help")
