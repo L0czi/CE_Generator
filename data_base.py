@@ -1,10 +1,9 @@
-"""modul for manage database"""
 import sqlite3
 import datetime
 
 
 def read_data(sql_fetch_query, value=None):
-    """Function wich query data from rad.db"""
+    """Function read data from .db"""
     try:
         sqliteConnection = sqlite3.connect("rad_data_base.db")
         cursor = sqliteConnection.cursor()
@@ -30,7 +29,7 @@ def read_data(sql_fetch_query, value=None):
 
 
 def upload_data(input_data):
-    """Function upload new radiator from input list to data base"""
+    """Function upload new product from input list to .db"""
     try:
         sqliteConnection = sqlite3.connect("rad_data_base.db")
         cursor = sqliteConnection.cursor()
@@ -64,7 +63,7 @@ def upload_data(input_data):
             cursor.execute(query, input_data_tuple)
 
             sqliteConnection.commit()
-            print(f"Radiator model: {name} add to database with success")
+            print(f"Product model: {name} add to database with success")
 
         cursor.close()
 

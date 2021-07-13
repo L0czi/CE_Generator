@@ -1,6 +1,13 @@
 import argparse
 import utilities as util
 
+POSSIBLE_QUERIES = {
+    "cp": "SELECT * from CE_radiators WHERE cp=:cp",
+    "family": "SELECT * from CE_radiators WHERE Family=:family",
+    "model": "SELECT * from CE_radiators WHERE Name=:model",
+    "all": "SELECT * from CE_radiators",
+}
+
 
 def get_parser():
     # create the top-level parser'
@@ -75,21 +82,21 @@ def command_line_runner():
     if args["command"] == "add":
 
         data_from_csv = util.read_data_from_csv("example_temporary.csv")
-        rad_from_csv = data_from_csv[1:]
+        prod_from_csv = data_from_csv[1:]
 
-        data_from_db = util.read_data_from_db()
-        rad_from_db = [rad[0] for rad in data_from_db]
+        data_from_db = util.read_data_from_db(POSSIBLE_QUERIES["all"])
+        prod_from_db = [prod[0] for prod in data_from_db]
 
-        input_data = util.compare_data(rad_from_csv, rad_from_db)
+        input_data = util.compare_data(prod_from_csv, prod_from_db)
         util.store_data_in_db(input_data)
 
     if args["command"] == "display":
 
-        data_from_db = util.read_data_from_db()
-        rad_from_db = [(rad[0], rad[1], rad[2], rad[3]) for rad in data_from_db]
+        data_from_db = util.read_data_from_db(POSSIBLE_QUERIES["all"])
+        prod_from_db = [(prod[0], prod[1], prod[2], prod[3]) for prod in data_from_db]
 
-        for i, rad in enumerate(rad_from_db, start=1):
-            print(i, rad)
+        for i, prod in enumerate(prod_from_db, start=1):
+            print(i, prod)
 
     if args["command"] == "generate":
 
@@ -99,41 +106,25 @@ def command_line_runner():
             and args["family"] == None
             and args["model"] == None
         ):
-            print("Choose one of the options!!!\n")
+            print(
+                "Choose one of options [-a/--all; -c/--cp, -f/--familly, -m/--model]\n"
+            )
 
-        if args["all"] == True:
+        else:
+            # create new dictonary based on args which contain only key:value
+            # paire of option choose by user
+            new_args = {
+                k: v
+                for k, v in args.items()
+                if v != None and v != False and k != "language" and k != "command"
+            }
 
-            query = "SELECT * from CE_radiators"
+            key = " ".join([k for k in new_args.keys()])
+            query = POSSIBLE_QUERIES[key]
+            value = new_args
 
-            rad_from_db = util.read_data_from_db(query)
-            util.generate_CE(rad_from_db, args["language"])
-
-        if args["cp"] != None:
-
-            query = "SELECT * from CE_radiators WHERE cp=:cp "
-            value = {}
-            value["cp"] = args["cp"]
-
-            rad_from_db = util.read_data_from_db(query, value)
-            util.generate_CE(rad_from_db, args["language"])
-
-        if args["family"] != None:
-
-            query = "SELECT * from CE_radiators WHERE Family=:family"
-            value = {}
-            value["family"] = args["family"]
-
-            rad_from_db = util.read_data_from_db(query, value)
-            util.generate_CE(rad_from_db, args["language"])
-
-        if args["model"] != None:
-
-            query = "SELECT * from CE_radiators WHERE Name=:model"
-            value = {}
-            value["model"] = args["model"]
-
-            rad_from_db = util.read_data_from_db(query, value)
-            util.generate_CE(rad_from_db, args["language"])
+            prod_from_db = util.read_data_from_db(query, value)
+            util.generate_CE(prod_from_db, args["language"])
 
     if args["command"] == None:
         print("Please choose a command or use -h for help")

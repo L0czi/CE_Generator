@@ -1,4 +1,5 @@
 import csv
+import sys
 import data_base as db
 from fpdf import Template
 import time
@@ -76,7 +77,7 @@ def generate_CE(rad_list, lang):
                 f["line13"] = language[12]
                 f["line14"] = language[13]
 
-                f["company_logo"] = "Layout/Zehnder.png"
+                f["company_logo"] = "Layout/company.png"
                 f["sign"] = "Layout/sign.png"
 
                 f.render("Printed_Declarations/" + title)
@@ -87,6 +88,7 @@ def generate_CE(rad_list, lang):
         print("\nWARNING!!!")
         print(f"{title} is open in another aplication and can't be generate.")
         print("Please close another aplication and try again")
+        sys.exit(1)
 
     stop = time.perf_counter()
     print("\n")
@@ -95,7 +97,7 @@ def generate_CE(rad_list, lang):
 
 
 def read_data_from_db(query, value=None):
-    """query data from rad.db"""
+    """read data from .db based on given query and variable value"""
     try:
         data = db.read_data(query, value)
 
@@ -104,6 +106,7 @@ def read_data_from_db(query, value=None):
 
     except ValueError:
         print(f"Given {value} not found in data base")
+        sys.exit(1)
 
     else:
         result = [rad[1:] for rad in data]
@@ -111,7 +114,7 @@ def read_data_from_db(query, value=None):
 
 
 def store_data_in_db(input_data):
-    """validate input data to .db and uploading them"""
+    """validate input data and uploading it to .db"""
     try:
         if input_data == []:
             raise ValueError
@@ -120,3 +123,4 @@ def store_data_in_db(input_data):
 
     except ValueError:
         print("No new radiators to add")
+        sys.exit(1)
