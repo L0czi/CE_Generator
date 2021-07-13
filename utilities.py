@@ -1,5 +1,4 @@
 import csv
-import json
 import data_base as db
 from fpdf import Template
 import time

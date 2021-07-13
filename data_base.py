@@ -45,7 +45,7 @@ def upload_data(input_data):
             familly = item[1]
             model_type = item[2]
             cp_number = item[3]
-            CE_type = item[4]
+            ce_type = item[4]
             report_num = item[5]
             signaturer = item[6]
             sign_date = datetime.date.today()
@@ -55,7 +55,7 @@ def upload_data(input_data):
                 familly,
                 model_type,
                 cp_number,
-                CE_type,
+                ce_type,
                 report_num,
                 signaturer,
                 sign_date,
