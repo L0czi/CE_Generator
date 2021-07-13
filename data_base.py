@@ -17,8 +17,9 @@ def read_data(sql_fetch_query, value=None):
 
         record = cursor.fetchall()
 
-        return record
         cursor.close()
+
+        return record
 
     except sqlite3.Error as error:
         print("Failed to read data from sqlite table", error)

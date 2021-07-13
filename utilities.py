@@ -94,24 +94,7 @@ def generate_CE(rad_list, lang):
     print(f"Generated declarations: {counter}")
 
 
-def query_all_data_from_db():
-    """read all data stored in rad.db"""
-    try:
-        query = "SELECT * from CE_radiators"
-        data = db.read_data(query)
-
-        if data == []:
-            raise ValueError
-
-    except ValueError:
-        print("Data base is empty")
-
-    else:
-        result = [rad[1:] for rad in data]
-        return result
-
-
-def query_data_from_db(query, value):
+def read_data_from_db(query, value=None):
     """query data from rad.db"""
     try:
         data = db.read_data(query, value)
@@ -127,8 +110,8 @@ def query_data_from_db(query, value):
         return result
 
 
-def query_data_into_db(input_data):
-    """validate input data to rad.db and quering them"""
+def store_data_in_db(input_data):
+    """validate input data to .db and uploading them"""
     try:
         if input_data == []:
             raise ValueError
