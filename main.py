@@ -1,13 +1,6 @@
 import argparse
 import utilities as util
 
-POSSIBLE_QUERIES = {
-    "cp": "SELECT * from CE_radiators WHERE cp=:cp",
-    "family": "SELECT * from CE_radiators WHERE Family=:family",
-    "model": "SELECT * from CE_radiators WHERE Name=:model",
-    "all": "SELECT * from CE_radiators",
-}
-
 
 def get_parser():
     # create the top-level parser'
@@ -65,11 +58,18 @@ def get_parser():
         help="generate CE Declarations for radiators by given family name",
     )
     group_parser_generate.add_argument(
+        "-n",
+        "--name",
+        metavar="",
+        type=str,
+        help="generate CE Declarations for chosen product name",
+    )
+    group_parser_generate.add_argument(
         "-m",
         "--model",
         metavar="",
         type=str,
-        help="generate CE Declarations for chosen model",
+        help="generate CE Declarations for chosen product type",
     )
 
     return parser
@@ -84,7 +84,7 @@ def command_line_runner():
         data_from_csv = util.read_data_from_csv("example_temporary.csv")
         prod_from_csv = data_from_csv[1:]
 
-        data_from_db = util.read_data_from_db(POSSIBLE_QUERIES["all"])
+        data_from_db = util.read_data_from_db("SELECT * from CE_radiators")
         prod_from_db = [prod[0] for prod in data_from_db]
 
         input_data = util.compare_data(prod_from_csv, prod_from_db)
@@ -92,7 +92,7 @@ def command_line_runner():
 
     if args["command"] == "display":
 
-        data_from_db = util.read_data_from_db(POSSIBLE_QUERIES["all"])
+        data_from_db = util.read_data_from_db("SELECT * from CE_radiators")
         prod_from_db = [(prod[0], prod[1], prod[2], prod[3]) for prod in data_from_db]
 
         for i, prod in enumerate(prod_from_db, start=1):
@@ -104,11 +104,18 @@ def command_line_runner():
             args["all"] == False
             and args["cp"] == None
             and args["family"] == None
+            and args["name"] == None
             and args["model"] == None
         ):
             print(
-                "Choose one of options [-a/--all; -c/--cp, -f/--familly, -m/--model]\n"
+                "Choose one of options [-a/--all; -c/--cp, -f/--familly, -n/--name, -m/--model]\n"
             )
+
+        elif args["all"] == True:
+
+            prod_from_db = util.read_data_from_db("SELECT * from CE_radiators")
+            print(prod_from_db)
+            # util.generate_CE(prod_from_db, args["language"])
 
         else:
             # create new dictonary based on args which contain only key:value
@@ -119,10 +126,10 @@ def command_line_runner():
                 if v != None and v != False and k != "language" and k != "command"
             }
 
-            key = " ".join([k for k in new_args.keys()])
-            query = POSSIBLE_QUERIES[key]
-            value = new_args
+            end_clause = " ".join([f"{k} =:{k}" for k in new_args.keys()])
 
+            query = "SELECT * from CE_radiators WHERE " + end_clause
+            value = new_args
             prod_from_db = util.read_data_from_db(query, value)
             util.generate_CE(prod_from_db, args["language"])
 
