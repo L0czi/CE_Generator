@@ -115,7 +115,7 @@ def command_line_runner():
 
             prod_from_db = util.read_data_from_db("SELECT * from CE_radiators")
             print(prod_from_db)
-            # util.generate_CE(prod_from_db, args["language"])
+            util.generate_CE(prod_from_db, args["language"])
 
         else:
             # create new dictonary based on args which contain only key:value
